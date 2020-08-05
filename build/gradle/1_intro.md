@@ -1,5 +1,7 @@
 # 개요
 
+학습 내용 자료 출처 : [열혈강의] 그레이들 youtube [Chapter 01 그레이들의 시작](https://www.youtube.com/watch?v=s-XZ5B15ZJ0&list=PL7mmuO705dG2pdxCYCCJeAgOeuQN1seZz&index=1)
+
 그레이들은 그루비라는 스크립트 형태의 언어로 작성되어 있다.
 
 > 컴파일 → 테스트 → 배포 과정을 거치며 해당 과정들을 문서화 해준다.
