@@ -1,0 +1,22 @@
+defaultTasks = ['exeTask001','exeTask002']
+
+project.description = 'Project Object Description'
+project.version = 'exeTask v1.0'
+task exeTask001{
+    doLast{
+        println 'Project name : ' + project.name
+        println 'Project description : ' + project.description
+        println 'Project group : ' + project.group
+        println 'Project path : ' + project.path
+        println 'Project projectDir : ' + project.projectDir
+        println 'Project status : ' + project.status
+        println 'Project state : ' + project.state.toString()
+        println 'Project version : ' + project.version
+    }
+}
+
+task exeTask002{
+    doLast{
+        println project.description
+    }
+}

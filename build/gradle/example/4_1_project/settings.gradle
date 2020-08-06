@@ -1,0 +1,9 @@
+gradle.allprojects{
+    project ->
+        project.beforeEvaluate{
+            println project.name + ' : check start'
+        }
+        project.afterEvaluate{
+            println project.name + ' : check end'
+        }
+}
