@@ -1,0 +1,21 @@
+task exeTask{
+    doFirst{
+        println 'Task start'
+    }
+    doLast{
+        println 'extTask name : ' + name
+        println 'extTask path : ' + path
+        println 'extTask description : ' + description
+        println 'extTask group : ' + group
+    }
+}
+
+exeTask.group 'Task Object'
+exeTask.description = 'Task Object Script Code'
+
+task exeAnoTask{
+    doLast{
+        println 'dependsOn Task'
+    }
+}
+exeTask.dependsOn exeAnoTask

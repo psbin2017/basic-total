@@ -100,4 +100,50 @@
 | shouldRunAfter | 태스크 실행 순서 제어 (비강제) |
 | state | 태스크 실행 상태 |
 
+### Task 객체 API
+
+| API | 설명 |
+| --- | --- |
+| doFirst(action) | 해당 태스크의 실행을 위한 Action 객체 리스트의 처음 부분에 위치하여 태스크가 실행될 때 먼저 처리 |
+| doLast(action) | 해당 태스크의 실행을 위한 Action 객체 리스트의 마지막 부분에 위치하여 실행 |
+| leftShift(action) | << 연산자를 사용하여 leftShift() 호출, Action 객체 리스트의 마지막 부분에 추가 |
+| Property(propertyName) | 태스크에 지정된 속성 값을 출력 |
+| setProperty(name, value) | 태스크의 속성 설정 |
+| hasProperty(propertyName) | 지정된 속성 값을 가졌는지 확인 |
+| dependsOn(paths) | 태스크의 의존 관계 |
+| onlyIf(onlyIfSpec) | 지정된 조건을 만족할 경우 태스크 진행 |
+
+## Gradle 객체
+
+### Gradle 객체 속성
+
+| 속성 | 설명 |
+| --- | --- |
+| gradle | Gradle 객체 반환, 초기화 스크립트에서 Gradle 속성과 메소드에 명시적으로 접근할 때 사용 |
+| gradleHomeDir | Gradle 홈 디렉토리 |
+| gradleUserHomeDir | 사용자의 홈 디렉토리 |
+| gradleVersion | 현재 사용 중인 Gradle 버전 |
+| includeBuilds | 포함된 빌드 관련 정보 |
+| plugins | Gradle 에 사용된 플러그인 컨테이너 |
+| rootProejct | Root 프로젝트 위치 |
+| startParameter | 빌드 수행 관련 파라미터 정보 |
+| taskGraph | 태스크 그래프 정보 표시 |
+
+### Gradle 객체 API
+
+| API | 설명 |
+| --- | --- |
+| addBuildListener(buildListener) | BuildListener 추가, 빌드 실행 중 발생되는 이벤트를 전달한다 |
+| addListener(listener) | 지정된 리스너 추가, 지정된 인터페이스 구현 가능 |
+| removeListener(listener) | 빌드로부터 지정된 리스너 제거 |
+| addProjectEvaluationListener(listener) | 프로젝트 평가 리스너, 프로젝트 평가 시 이벤트 전달 |
+| afterProject() | 프로젝트 평가 후 바로 호출할 작업 추가 |
+| apply() | 플러그인 또는 스크립트 적용 |
+| beforeProject() | 프로젝트 평가되기 바로 전 호출할 작업 추가 |
+| buildFinished() | 빌드가 완료될 떄 호출할 작업 추가 |
+| projectEvaluated() | 모든 프로젝트를 평가된 후 호출할 작업 추가 |
+| projectLoaded() | 프로젝트가 빌드를 위해 로드된 후 호출할 작업 추가 |
+| settingsEvaluated() | 프로젝트 관련 빌드 설정이 로드 및 평가될 때 호출할 작업 추가 |
+| userLogger() | Logger 를 사용할 수 있도록 제공 |
+
 // TODO
