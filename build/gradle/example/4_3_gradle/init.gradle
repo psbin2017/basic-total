@@ -1,0 +1,31 @@
+class addListenerExe implements TaskExecutionListener{
+    void beforeExecute(Task task){
+        println 'before execute : ' + task.name
+    }
+    void afterExecute(Task task, TaskState state){
+        if (state.getExecuted()) {
+            println 'after execute : ' + task.name
+        }
+    }
+}
+// TaskExecutionListener 를 구현한 addListenerExe 를 Gradle 에 이벤트 리스너 추가
+gradle.addListener(new addListenerExe())
+
+settingsEvaluated{
+    println '1 - settingsEvaluated()'
+}
+projectsLoaded{
+    println '2 - projectsLoaded() API'
+}
+beforeProject{
+    println '3 - beforeProject() API'
+}
+afterProject{
+    println '4 - afterProject() API'
+}
+projectsEvaluated{
+    println '5 - projectsEvaluated() API'
+}
+buildFinished{
+    println '6 - buildFinished() API'
+}

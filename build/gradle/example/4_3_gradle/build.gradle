@@ -1,0 +1,11 @@
+task exeTask{
+    doLast{
+        println 'Gradle Instance Properties'
+        println 'gradleHomeDir > ' + gradle.gradleHomeDir
+        println 'gradleUserHomeDir > ' + gradle.gradleUserHomeDir
+        println 'gradleVersion > ' + gradle.gradleVersion
+        println 'rootProject > ' + gradle.rootProject
+        println 'startParameter > ' + gradle.startParameter
+        println 'taskGraph > ' + gradle.taskGraph
+    }
+}

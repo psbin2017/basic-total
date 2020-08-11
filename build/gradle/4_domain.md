@@ -146,4 +146,69 @@
 | settingsEvaluated() | 프로젝트 관련 빌드 설정이 로드 및 평가될 때 호출할 작업 추가 |
 | userLogger() | Logger 를 사용할 수 있도록 제공 |
 
-// TODO
+### Gradle 실습
+
+`addBuildListener` 실습 `build.gradle` 작성이 아닌 `init.gradle` 로 작성한다.
+
+`TaskExecutionListener` 인터페이스를 구현하여 빌드 리스너에 추가한다.
+
+실행 명령어는 이전 실습과 다르게 `init.gradle` 을 사용하기 때문에 `gradle -I init.gradle help` 로 실행한다.
+
+```txt
+> Task :help
+before execute : help
+Caching disabled for task ':help' because:
+  Build cache is disabled
+Task ':help' is not up-to-date because:
+  Task has not declared any outputs despite executing actions.
+
+Welcome to Gradle 6.5.1.
+
+To run a build, run gradle <task> ...
+
+To see a list of available tasks, run gradle tasks
+
+To see a list of command-line options, run gradle --help
+
+To see more detail about a task, run gradle help --task <task>
+
+For troubleshooting, visit https://help.gradle.org
+after execute : help
+:help (Thread[Execution worker for ':',5,main]) completed. Took 0.007 secs.
+```
+
+`help` 키워드는 그레이들의 내장 키워드이다. 대신하여 `build.gradle` 에 작성한 exeTask 를 명시하여 실행할 수 있다.
+
+## Settings 객체
+
+설정 스크립트로서 멀티 프로젝트 설정 등 프로젝트 빌드 수행 전 Settings 객체를 생성한다.
+
+### Settings 객체 속성
+
+| 속성 | 설명 |
+| --- | --- |
+| gradle | 현재 빌드를 위한 Gradle 객체 |
+| plugins | Settings 객체에 적용한 플러그인 컨테이너 |
+| rootDir | 빌드의 루트 디렉토리 (루트 디렉토리의 프로젝트 디렉토리) |
+| rootProject | 빌드의 루트 프로젝트 |
+| settings | Settings 객체 참조 (자기 자신) |
+| settingDir | 빌드의 설정 디렉토리 (설정 디렉토리는 설정 파일을 포함한 디렉토리) |
+| startParameter | Gradle 이 빌드 수행시점에 사용된 명령어 인수 |
+
+### Settings 객체 API
+
+| API | 설명 |
+| --- | --- |
+| findProject() | 지정된 디렉터리 혹은 파일 경로와 일치하는 Project 객체 반환 (일치하는 디렉터리 또는 파일 경로가 없을 시 null 반환) |
+| Project() | 위와 동일하나 없을 시 에러 발생 |
+| include() | 계층형 멀티 프로젝트 추가 시 사용 |
+| includeFlat() | 단층형 멀티 프로젝트 추가 시 사용 |
+
+## 기타 객체
+
+| 객체 | 설명 |
+| --- | --- |
+| Script | Gradle 의 특정 메소드를 추가하기 위해 사용. Gradle 의 스크립트에서 Script 객체의 인터페이스를 구현하여 메소드와 속성을 사용 |
+| SourceSet | 자바 소스 및 자원에 대해 그룹을 형성하여 사용 |
+| ExtensionAware | Runtime 에 다른 객체와 함께 확장하여 사용 extensions 이라는 확장 속성을 저장하는 컨테이너 이용 |
+| ExtraPropertiesExtension | ext 로 정의된 확장 속성 으로 has(), set(), get() 3가지 API 로 특정 키 값 제어 |
