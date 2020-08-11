@@ -4,13 +4,13 @@
 
 ## 태스크 형태
 
-```gradle
+```groovy
 task hello<<{
     println 'Hello Gradle!'
 }
 ```
 
-```gradle
+```groovy
 // def 형으로 선언 및 클로저 정의
 def strMsg = { println 'Hello Gradle!' }
 
@@ -26,7 +26,7 @@ hello.leftShift(strMsg)
 
 ### <<
 
-```gradle
+```groovy
 // 라이프 사이클 중 실행 단계에서 수행됨
 task lifeTask1<<{
     println 'Hello Gradle1'
@@ -42,7 +42,7 @@ task lifeTask2{
 
 ### 프로퍼티
 
-```gradle
+```groovy
 task propTask<<{
     println description + 'Good';
 }
@@ -55,7 +55,7 @@ propTask.description = 'Task Execution'
 
 ### String 객체 함수
 
-```gradle
+```groovy
 task stringTask<<{
     String strOutput = 'Good Day'
     println '1. String change:' + strOutput.toUpperCase()
@@ -67,7 +67,7 @@ task stringTask<<{
 
 ### times
 
-```gradle
+```groovy
 task loopTask<<{
     // 루프문 0 부터 9 까지 10번 반복
     10.times { println "$it" }
@@ -77,7 +77,7 @@ task loopTask<<{
 
 변수를 받아 반복 정의할 수도 있다.
 
-```gradle
+```groovy
 3.times{counter->
     task "counterTask$counter"<<{
         println "task counter : $counter"
@@ -93,7 +93,7 @@ task loopTask<<{
 
 이 경우 `doFirst` > `task` > `doLast` 로 실행된다.
 
-```gradle
+```groovy
 task helloTask<<{}
 task helloTask.doFirst<<{}
 task helloTask.doLast<<{}
@@ -105,7 +105,7 @@ task helloTask.doLast<<{}
 
 `ext` 는 그레이들에서 제공하는 기본 객체이다.
 
-```gradle
+```groovy
 task userInfo{
     ext.userName = "John"
 }
@@ -121,7 +121,7 @@ task userTask<<{
 
 실행 시점에 task 를 나열하지 않는 `defaultTasks` 가 있다.
 
-```gradle
+```groovy
 defaultTasks 'defTask1','defTask2','defTask3'
 task defTask1<<{}
 task defTask2<<{}
@@ -134,7 +134,7 @@ task defTask3<<{}
 
 `times` 와 다른 점은 each 는 해당 객체와 값의 갯수로 실행하게 된다.
 
-```gradle
+```groovy
 def confMap = ['imgConf':'helloWold.co.kr', 'smsConf':'byeWorld.co.kr']
 
 confMap.each { svDomain, domainAddr->
@@ -152,7 +152,7 @@ confMap.each { svDomain, domainAddr->
 
 특정 조건일 때 빌드 수행
 
-```gradle
+```groovy
 task onlyTask {}
 
 task onlyTask.onlyIf{
@@ -165,7 +165,7 @@ task onlyTask.onlyIf{
 
 ### 예외 처리
 
-```gradle
+```groovy
 task processTask<<{}
 
 processTask<<{
@@ -186,7 +186,7 @@ processTask<<{}
 
 `afterTask` 는 `beforeTask` 를 수행하고난 후에 실행한다.
 
-```gradle
+```groovy
 task beforeTask<<{}
 
 task afterTask<<{}
@@ -200,7 +200,7 @@ afterTask.mustRunAfter beforeTask
 
 `shouldRunAfter` 는 `mustRunAfter` 처럼 순서를 지정하지만, 순서가 무시되는 예외가 있다.
 
-```gradle
+```groovy
 task beforeShTask<<{}
 task afterShTask<<{}
 
@@ -219,7 +219,7 @@ afterShTask.shouldRunAfter beforeShTask
 
 방향성 비순환 그래프 : 태스크간 의존 관계를 시각적으로 표현
 
-```gradle
+```groovy
 task FirstTask<<{
     println 'First Task'
 }
@@ -243,7 +243,7 @@ task ThirdTask(dependsOn : 'SecondTask')<<{
 
 ### 종료 태스크
 
-```gradle
+```groovy
 task FinTask<<{
     println 'Finish Task'
 }
