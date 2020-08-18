@@ -1,5 +1,7 @@
 # 파일 관리
 
+학습 내용 자료 출처 : [열혈강의] 그레이들 youtube [Chapter 05 그레이들의 파일 처리](https://www.youtube.com/watch?v=GgZO3sLiKRg&list=PL7mmuO705dG2pdxCYCCJeAgOeuQN1seZz&index=17)
+
 ## ant pattern
 
 북마크 용도로 영어로 헤딩함
@@ -234,7 +236,7 @@ copy{
 }
 ```
 
-### rename
+## rename
 
 ```gradle
 copy{
@@ -248,4 +250,79 @@ copy{
 }
 ```
 
-// TODO 3분 59초
+## 파일 내용 편집
+
+파일 내용을 옮기고 나서 변경된 패키지 경로를 알맞게 수정한다.
+
+```gradle
+// 파일 복사
+copy{
+    from('src/com/org/file'){
+        include '**/original.java'
+        rename 'original.java', 'editCloser.java'
+    }
+}
+
+into 'src/com/edit/file'
+
+// filter() 이용
+filter{
+    line -> line.replaceAll 'com.org.file', 'com.edit.file'
+}
+
+filter{
+    line -> line.replaceAll 'original', 'editCloser'
+}
+```
+
+### TASK 파일 복사
+
+Task 로 작성시 다음과 같다.
+
+```gradle
+task copyTask(type: Copy) {
+    from('src/com/org/file') {
+        include '**/original.java'
+        rename 'original.java', 'editCloser.java'
+    }
+}
+
+into 'src/com/edit/file'
+
+// filter() 이용
+filter{
+    line -> line.replaceAll 'com.org.file', 'com.edit.file'
+}
+
+// filter() 이용
+filter{
+    line -> line.replaceAll 'original', 'editCloser'
+}
+```
+
+## copySpec
+
+```gradle
+def dataContent = copySpec {
+    from('src/com/org/file') {
+        include '**/original.java'
+        rename 'original.java', 'editCloser.java'
+    }
+}
+
+task fileCopy(type: Copy) {
+    with dataContent
+    into 'build/target/back_up'
+}
+```
+
+## 파일 삭제
+
+```gradle
+delete 'src/com/org/file/original.java', 'src/com/org/file/todo.java'
+
+task delFile(type: Delete) {
+    delete 'src/com/org/file/original.java', 'src/com/org/file/todo.java'
+    followSymlinks = true
+}
+```
