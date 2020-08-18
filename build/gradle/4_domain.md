@@ -1,5 +1,7 @@
 # 도메인
 
+학습 내용 자료 출처 : [열혈강의] 그레이들 youtube [Chapter 04 그레이들의 도메인 객체](https://www.youtube.com/watch?v=hbZJPhceVg4&list=PL7mmuO705dG2pdxCYCCJeAgOeuQN1seZz&index=13)
+
 ## Project
 
 프로젝트의 환경 구성, 의존 관계, 태스크 등의 내용을 제어하거나 참조한다.
