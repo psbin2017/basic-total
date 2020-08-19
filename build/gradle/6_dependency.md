@@ -176,4 +176,60 @@ configurations.newConfDef{
 }
 ```
 
-// TODO 의존 관계 - 2. 환경 구성 정의 ..
+## 환경 구성 정의
+
+```gradle
+repositories{
+    jcenter()
+}
+
+cofigurations{
+    conf1
+    testConf1.extendFrom conf1 // conf1 을 상속하여 사용한다.
+}
+
+dependencies{
+    conf1 group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.3.1'
+    testConf gorup: 'junit', name: 'junit', version: '4.11'
+}
+
+task exeTask{
+    doLast{
+        configurations.testConf1.each{
+            println it.absolutePath
+        }
+    }
+}
+```
+
+### 저장소
+
+```gradle
+repositories{
+
+    // 메이븐 센트럴
+    mavenCentral()
+
+    // 메이븐 url 선언형
+    maven{
+        url "https://repo1.maven.org/maven2"
+    }
+
+    // 메이븐 로컬
+    mavenLocal() // USER_HOME/.m2/repository
+
+    // 제이 센터
+    jcenter()
+
+    // 아이비
+    ivy{
+        url "http://"
+        layout "maven" // 저장소 디렉토리 구조 지정
+    }
+
+    // 로컬 디렉토리 저장소
+    flatDir{
+        dirs "local_lib", "introHtml" // 로컬 디렉토리 지정
+    }
+}
+```
