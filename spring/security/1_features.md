@@ -1,0 +1,461 @@
+# Authentication
+
+원글 출처 : [Spring security](https://docs.spring.io/spring-security/site/docs/5.3.2.RELEASE/reference/html5/)
+
+번역 출처 : [토리맘의 한글라이즈 프로젝트](https://godekdls.github.io/Spring%20Security/contents/)
+
+| 용어 | 설명 |
+| --- | --- |
+| 인증 (Authentication) | 사용자가 누구인지 확인하는 절차 |
+| 인가 (Authorization)) | 사용자를 식별하여 알맞은 권한을 부여 |
+
+인증은 특정 리소스에 접근하려고 하는 사용자가 누구인지 확인한다.
+
+아이디와 패스워드를 입력하는 것이 사용자를 인증하는 것의 예이다.
+
+인증이 완료되면 사용자를 식별하고 권한을 부여하는 인가를 실시한다.
+
+## Password Storage
+
+`PasswordEncoder` 인터페이스는 비밀번호를 안전하게 저장할 수 있도록 단방향 변환을 수행한다.
+
+스프링은 단방향 변환은 적응형 단방향 함수(`Adaptive One-Way Function`)를 권장하며 이는 많은 리소스를 소모한다.
+
+시스템에 따라 적응형 단방향 함수를 수행하는 워크 팩터(`Work Factor`)를 지정할 수 있으며 적절히 튜닝하는 것을 권고한다.
+
+비밀번호를 매번 검증하는 것은 어플리케이션 성능에 영향을 주기 때문에 *사용자 이름과 비밀번호*인 장기 credential 은 단기 credential 인 *세션, OAuth 토큰*으로 바꾸는 것이 좋다.
+
+단기 credential 은 동일한 보안 수준을 유지한다.
+
+### DelegatingPasswordEncoder
+
+- 이미 많은 애플리케이션이 마이그레이션이 어려운 이전 방식의 비밀번호를 인코딩 하고 있다.
+- 비밀번호를 저장하기 위한 방법은 기술에 따라 다시 바뀔 것이다.
+- 하위 호환성을 보장하지 않는 업데이트가 불가능하다.
+
+이러힌 이슈로 `DelegatingPasswordEncoder` 를 도입하여 문제를 해소하였다.
+
+- 비밀번호를 현재 권장하는 저장 방식으로 인코딩함을 보장한다.
+- 검증은 최신과 레거시 형식을 모두 지원한다.
+- 이후에 인코딩을 변경할 수 있다.
+
+### Password Storage Format
+
+```text
+{id}encodedPassword
+```
+
+### Password Encoding
+
+생성자에 전달한 `idForEncode` 가 비밀번호를 인코딩할 때 사용할 `PasswordEncoder` 를 결정한다.
+
+```java
+String idForEncode = "bcrypt";
+Map encoders = new HashMap<>();
+encoders.put(idForEncode, new BCryptPasswordEncoder());
+encoders.put("noop", NoOpPasswordEncoder.getInstance());
+encoders.put("pbkdf2", new Pbkdf2PasswordEncoder());
+encoders.put("scrypt", new SCryptPasswordEncoder());
+encoders.put("sha256", new StandardPasswordEncoder());
+
+PasswordEncoder passwordEncoder = new DelegatingPasswordEncoder(idForEncode, encoders);
+```
+
+`DelegatingPasswordEncoder` 는 `password` 인코딩 결과를 `BCryptPasswordEncoder` 로 위임하며, 접두어(prefix) 는 `{bcrypt}` 를 사용한다.
+
+```text
+{bcrypt}$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HZWzG3YB1tlRy.fqvM/BG
+```
+
+### Password Matching
+
+`{id}` 를 기반으로 매칭되며, 생성자에서 제공한 `PasswordEncoder` 로 매핑된다.
+
+비밀번호와 `{id}` 가 매핑되지 않으면 예외가 발생하며, 이는 `DelegatingPasswordEncoder.setDefaultPasswordEncoderForMatches(PasswordEncoder)` 로 커스텀 할 수 있다.
+
+### Spring Boot CLI
+
+```text
+spring encodepassword password
+{bcrypt}$2a$10$X5wFBtLrL/kHcmrOGGTrGufsBX8CJ0WpQpF3pgeuxBB/H73BK1DW6
+```
+
+### BCryptPasswordEncoder
+
+`BCryptPasswordEncoder` 구현체는 널리 사용되고 있는 알고리즘으로 비밀번호를 해싱하며 의도적으로 느리게 동작하기 떄문에 비밀번호를 해독하기 어렵다.
+
+```java
+// Create an encoder with strength 16
+BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(16);
+String result = encoder.encode("myPassword");
+assertTrue(encoder.matches("myPassword", result));
+```
+
+### Argon2PasswordEncoder
+
+`Argon2PasswordEncoder` 구현체는 메모리를 많이 사용하며 느리게 동작하며 최신 구현체는 `BouncyCastle` 라이브러리가 필요하다.
+
+```java
+// Create an encoder with all the defaults
+Argon2PasswordEncoder encoder = new Argon2PasswordEncoder();
+String result = encoder.encode("myPassword");
+assertTrue(encoder.matches("myPassword", result));
+```
+
+### Pbkdf2PasswordEncoder
+
+`Pbkdf2PasswordEncoder` 구현체는 마찬가지로 느리게 동작하며 해독하기 어렵다.
+
+FIPS 인증이 필요하다면 이 알고리즘이 적합하다.
+
+```java
+// Create an encoder with all the defaults
+Pbkdf2PasswordEncoder encoder = new Pbkdf2PasswordEncoder();
+String result = encoder.encode("myPassword");
+assertTrue(encoder.matches("myPassword", result));
+```
+
+### SCryptPasswordEncoder
+
+이하 동문
+
+```java
+// Create an encoder with all the defaults
+SCryptPasswordEncoder encoder = new SCryptPasswordEncoder();
+String result = encoder.encode("myPassword");
+assertTrue(encoder.matches("myPassword", result));
+```
+
+### Other PasswordEncoders
+
+호환성을 가진 `PasswordEncoder` 구현체도 많다.
+
+그러나 안전하지 않다는 것을 나타내기 위하여 `@Deprecated` 를 명시하였다.
+
+### Password Storage Configuration
+
+스프링 시큐리티는 기본값으로 `DelegatingPasswordEncoder` 를 사용한다.
+
+그러나 `PasswordEncoder` 를 스프링 빈으로 정의하면 변경할 수 있다.
+
+# Protection Against Exploits
+
+스프링 시큐리티는 주요 취약점 공격으로부터 애플리케이션을 보호한다.
+
+## Cross Site Request Forgery (CSRF)
+
+사이트 간 요청 위조 공격에 대한 종합적인 방어를 지원한다.
+
+CSRF 공격은 공격받는 웹사이트의 HTTP 요청과 공격하는 웹사이트의 요청이 완전히 동일하다는 것에 있다.
+
+그렇기에 CSRF 공격을 방어하기 위해선 공격하는 사이트에서 제공할 수 없는 무언가를 요청하여 두 요청을 구분해야만 한다.
+
+- 동기화 토큰 패턴
+- 세션 쿠키의 SameSite 속성 지정
+
+> 두 가지 모두 safe HTTP 메소드는 반드시 멱등성을 보장해야한다.
+
+### Safe Methods Must be Idempotent
+
+가장 중요한 멱등성을 보장하는 것은, HTTP 메소드 중 `GET`, `HEAD`, `OPTIONS`, `TRACE` 요청은 애플리케이션 상태를 변화시키면 안된다.
+
+### Synchronizer Token Pattern
+
+CSRF 공격을 방어하는 방법은 동기화 토큰 패턴이 가장 대중적이다.
+
+모든 HTTP 요청에 세션 쿠키과 별개로 CSRF 토큰이라는 랜덤 값을 추가한다.
+
+HTTP 요청을 제출하면 서버에서 의도한 CSRF 토큰을 찾아 실제 HTTP 요청에 있는 CSRF 토큰과 비교한다. (멱등성 비교)
+
+HTTP 요청에서 서버에서 의도한 CSRF 토큰을 찾아 실제 HTTP 요청에 있는 토큰과 비교함으로 요청을 수락한다.
+
+핵심은 HTTP 요청에 브라우저가 자동으로 넣지않는 CSRF 토큰이 있어야 한다는 것이다.
+
+쿠키에 담는 경우 브라우저가 HTTP 요청에 **자동으로 포함**하기 때문에 무의미하다.
+
+애플리케이션 상태를 수정하는 HTTP 요청에만 CSRF 를 사용하도록 조건을 완화해도 좋다.
+
+### SameSite Attribute
+
+쿠키에 SameSite 속성을 지정하는 것으로 서버에서 쿠키 `SameSite` 를 명시하는 것으로 외부사이트가 보내는 요청엔 쿠키를 사용하지 않겠다고 지정할 수 있다.
+
+```text
+Set-Cookie: JSESSIONID=randomid; Domain=bank.example.com; Secure; HttpOnly; SameSite=Lax
+```
+
+- Strict : 동일 사이트가 보내는 모든 요청에 쿠키를 포함시킨다.
+- Lax : 동일 사이트가 보내는 모든 요청에 쿠키를 포함 시킨다. 또한 사이트가 다르더라도 top-level navigation 에서 보낸 요청이면서 멱등성을 보장하는 메소드라면 쿠키를 포함시킨다.
+
+> SameStie 속성이 Strict 이면 쿠키를 전송하지 않기 때문에 다른 도메인의 사용자 인증이 불가능하다.
+
+마지막으로 브라우저가 SameSite 를 지원해야하며, CSRF 의 이중 방어 장치로 사용하기를 권장한다.
+
+## CSRF Considerations
+
+### Logging In
+
+로그인 요청 위조를 막으려면 CSRF 공격으로부터 보호해야한다.
+
+악의적인 요청을 막기위해 반드시 필요하며 세션이 타임아웃되면 사용자가 요청을 거절당하는 불편함이 생긴다.
+
+### CSRF and Session Timeouts
+
+서버에서 비교할 때 쓴 CSRF 토큰은 종종 세션에 저장한다.
+
+이는 세션이 만료되면 서버에서는 CSRF 토큰을 조회할 수 없으므로 HTTP 요청을 거절한다는 뜻이 된다.
+
+타임아웃을 해결 하는 방법은 다음과 같으며 방법마다 장단점을 가지고 있다.
+
+- 자바스크립트를 통해 CSRF 토큰을 요청하는 것이다.
+- 자바스크립트로 사용자에게 세션이 만료될 것을 알리는 것이다.
+- CSRF 토큰을 쿠키에 저장한다.
+
+CSRF 토큰을 기본을 쿠키로 사용하지 않는 이유는 손상되었을 때 강제 종료가 불가능 한 점과 마찬가지인 취약점 공격이 있기 때문에 기본으로 채택되지 않았다.
+
+### Multipart (file upload)
+
+파일 업로드를 보호하려고 할 때는 닭이 먼저인가, 달걀이 먼저인가하는 문제와 직면한다.
+
+HTTP 요청 body 를 읽어 CSRF 토큰을 확인해야 한다.
+
+그러나 body 를 읽는 것은 파일이 업로드 된다는 뜻이다.
+
+multipart/form-data에서 사용할 수 있는 CSRF 방어 옵션은 두 가지가 있다.
+
+#### Place CSRF Token in the Body
+
+요청 body 에 실제 CSRF 토큰을 추가한다. CSRF 토큰을 body 에 넣으면 body 를 읽고 나서 권한을 부여한다.
+
+임시 파일을 만들 수 있어도 인가된 사용자가 제출한 파일만 처리된다.
+
+#### Include CSRF Token in URL
+
+권한이 없는 사용자가 임시 파일을 업로드하게 만드는게 불가능하다면, 폼의 action 속성에 쿼리 파라미터로 CSRF 토큰을 넣는 것도 방법이다.
+
+그러나 쿼리 파라미터가 유출되기 때문에 관행으로 body 나 header 에 두는 것이 바람직하다.
+
+### HiddenHttpMethodFilter
+
+일부 애플리케이션에서는 폼 파라미터로 HTTP 메소드를 재정의한다.
+
+```html
+<form action="/process"
+    method="post">
+    <!-- ... -->
+    <input type="hidden"
+        name="_method"
+        value="delete"/>
+</form>
+```
+
+메소드 재정의는 필터에서 일어나며, 이 필터는 시큐리티 필터보다 선행처리되어야한다.
+
+## Security HTTP Response Headers
+
+웹 애플리케이션의 보안을 위해 사용할 수 있는 HTTP 응답 헤더는 다양하다.
+
+시큐리티에서 지원하는 여러 헤더와 필요에 따라 커스텀 헤더를 사용하는 방법을 알아본다.
+
+> 서블릿과 웹플럭스는 다른 섹션을 참고한다.
+
+### Default Security Headers
+
+```text
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+X-Content-Type-Options: nosniff
+Strict-Transport-Security: max-age=31536000 ; includeSubDomains
+X-Frame-Options: DENY
+X-XSS-Protection: 1; mode=block
+```
+
+> Strict-Transport-Security 헤더는 HTTP 요청에만 추가된다.
+
+#### Cache Control
+
+시큐리티는 사용자 컨텐츠 보호를위해 기본적으로 캐시를 비활성화한다.
+
+인가받은 사용자가 로그아웃했을 때, 다른 사용자가 악의적으로 뒤로 간후 해당 정보를 보지 못하게 위해서다.
+
+```text
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+```
+
+애플리케이션 자체에서 Cache-Control 헤더를 사용한다면 시큐리티는 기본으로 추가하지 않으며 원하는 정적 리소스를 캐시가 가능하다. (CSS, Javascript)
+
+#### Content Type Options
+
+IE 를 포함해 브라우저는 컨텐츠 스니핑을 사용해 요청의 컨텐츠 타입을 추론하였다.
+
+컨텐츠 스니핑의 문제점은 악의적으로 다국어(여러 컨텐츠 타입 중에서도 유효한 파일)를 사용해 XSS 공격을 실행 할 수 있다는 점이다.
+
+이를 방지하기 위해서 컨텐츠 스니핑을 비활성화 해야 한다.
+
+```text
+X-Content-Type-Options: nosniff
+```
+
+#### HTTP Strict Transport Security (HSTS)
+
+`mybank.example.com` 와 `https://mybank.example.com` 의 차이점은 중간자 공격이다.
+
+웹사이트에서 `https://mybank.example.com` redirect 하더라도 악의적으로 최초 HTTP 요청을 가로채서 응답을 조작할 수 있다.
+
+https 를 생략하고 접근하는 사용자가 많아 HSTS 가 생겨났다.
+
+`mybank.example.com` 이 HSTS 호스트에 추가되면 브라우저는 `mybank.example.com` 요청을 `https://mybank.example.com` 로 해석해야 한다는 것을미리 알 수 있다.
+
+> HTTPS 응답에만 HSTS 헤더를 추가하는데 브라우저가 헤더를 인식하려면 CA 에서 서명한 SSL 인증서로 커넥션을 맺어야한다.
+
+사이트를 HSTS 호스트로 표시하는 방법은 다음과 가다.
+
+```text
+Strict-Transport-Security: max-age=31536000 ; includeSubDomains ; preload
+```
+
+브라우저에게 1년간 해당 도메인을 HSTS 호스트로 취급하라는 것을 알린다.
+
+`includeSubDomains` 는 선택사항으로 하위 도메인(`*.mybank.example.com`)도 HSTS 도메인으로 취급하라는 것으로 알린다.
+
+#### HTTP Public Key Pinning (HPKP)
+
+> 시큐리티는 서블릿 환경에서 HPKP 를 지원하지만 권장하지 않는다.
+
+HPKP 는 웹 서버에서 사용할 공개키를 웹 클라이언트에 지정하는 방식으로, 위조 인증서를 사용하는 중간자의 공격을 방어한다.
+
+그러나 HPKP 의 복잡도로 권장되지 않으며 크롬은 지원을 중단하였다.
+
+#### X-Frame-Options
+
+프레임에 웹사이트를 넣을 수 있게 허용하는 것은 보안 이슈가 있다.
+
+이런 공격을 클릭재킹(Clickjacking)이라고 한다.
+
+> 컨텐츠 보안 정책(Content Security Policy, CSP) 도 클릭재킹을 방어하는 방법이다.
+
+```text
+X-Frame-Options: DENY
+```
+
+#### X-XSS-Protection
+
+브라우저는 기본적으로 reflected XSS 공격을 필터링한다.
+
+완전한 대응책은 아니지만 XSS 공격을 1차적으로 막아준다.
+
+```text
+X-XSS-Protection: 1; mode=block
+```
+
+헤더를 추가하는 것 만으로 필터링을 활성화 할 수 있으며 XSS 공격을 감지하였을 때 할 일을 지시할 수 있다.
+
+#### Content Security Policy (CSP)
+
+XSS 같은 컨텐츠 인젝션 공격 취약성을 개선하는 방법이다.
+
+CSP 는 웹 애플리케이션이 로드할 수 있는 리소스를 개발자가 직접 명시하여 궁극적으로 클라이언트(user-agent)에게 알리는 정책이다.
+
+> CSP 는 공격에 대한 해결이 아닌 피해에 대한 최소화이다.
+> 일차적인 방어는 웹 애플리케이션에서 입력을 검증하고 출력을 인코딩하는 것이다.
+
+```text
+Content-Security-Policy
+
+// 또는
+Content-Security-Policy-Report-Only
+```
+
+클라이언트에게 보안 정책을 전달하는 메커니즘으로 보안 정책은 특정 리소스의 표현을 제안하는 보안 정책 지시문의 집합이다.
+
+```text
+Content-Security-Policy: script-src https://trustedscripts.example.com
+```
+
+해당 헤더를 추가하면, 신뢰할 수 있는 특정 리소스에서만 스크립트를 로드한다.
+
+`script-src` 에 선언한 리소스 외의 다른 리소스에서 스크립트를 로드하려고 하면 user-agent 에서 막힌다.
+
+추가로 보안 정책에 `report-uri` 를 선언하면 user-agent 는 이런 시도가 있을 때 마다 지정 URL 에 보고한다. (공격 로그)
+
+```text
+Content-Security-Policy: script-src https://trustedscripts.example.com; report-uri /csp-report-endpoint/
+```
+
+보안 정책에 위반되는 경우 `/csp-report-endpoint/` 에 보고할 것을 지시한다.
+
+자체 API 로 수집할 수 도 있고, 아니면 공개적으로 호스팅 되는 CSP violation 리포팅 서비스를 이용할 수 있다.
+
+`Content-Security-Policy-Report-Only` 는 보안 정책을 바로 적용하는 대신, 개발자와 관리자가 보안 정책을 모니터링할 수 있다.
+
+보통 보안정책이 실험/개발 단계일 때 사용하며 정책에 효과가 있다고 판단되면, 이 헤더 대신 `Content-Security-Policy` 헤더 필드를 사용하여 정책을 시행할 수 있다.
+
+```text
+Content-Security-Policy-Report-Only: script-src 'self' https://trustedscripts.example.com; report-uri /csp-report-endpoint/
+```
+
+### Referrer Policy
+
+Referrer-Policy 은 사용자가 마지막으로 방문한 페이지를 가지고 있는 referrer 필드를 관리할 수 있는 메커니즘이다.
+
+```text
+Referrer-Policy: same-origin
+```
+
+해당 정책은 브라우저가 이전에 사용자가 방문한 곳을 도착지에 알린다.
+
+### Feature Policy
+
+Feature-Policy 는 웹 개발자가 원하는 대로 특정 API 와 브라우저의 웹기능을 활성화, 비활성화하거나 동작을 수정할 수 있게 한다.
+
+```text
+Feature-Policy: geolocation 'self'
+```
+
+해당 정책은 개발자가 브라우저의 "정책" 집합에 관여하여 사이트 전체에서 사용할 특정 기능을 강제할 수 있다.
+
+예를 들어 사이트에서 접근할 수 있는 API 를 제한하거나, 특정 기능에서의 브라우저 동작 방식을 바꿀 수 있다.
+
+### Clear Site Data
+
+```text
+Clear-Site-Data: "cache", "cookies", "storage", "executionContexts"
+```
+
+헤더에 추가하면 쿠키, 로컬 스토리지 등의 브라우저 단 데이터를 삭제할 수 있다.
+
+### Custom Headers
+
+시큐리티는 일반적인 보안 헤더를 애플리케이션에 편리하게 추가할 수 있는 방식을 제공하며 커스텀 헤더를 추가할 수 있는 훅도 함께 제공한다.
+
+## HTTP
+
+정적 리소스를 포함한 모든 HTTP 통신은 TLS 로 보호해야한다.
+
+스프링은 HTTP 커넥션과 HTTPS 를 직접적으로 지원하지 않는다.
+
+그러나 HTTPS 의 사용을 도와주는 기능을 제공한다.
+
+### Redirect to HTTPS
+
+시큐리티는 클라이언트에서 HTTP 를 사용하였을 때 HTTPS 로 리다이렉트 하도록 설정할 수 있다.
+
+### Strict Transport Security
+
+시큐리티는 Strict Transport Security 를 지원하며 기본적으로 활성화되어 있다.
+
+### Proxy Server Configuration
+
+프록시 서버를 사용한다면 애플리케이션 설정에 문제가 이상 없는지 확인해야 한다.
+
+다수의 애플리케이션이 로드 밸런싱을 사용하고 있으며 요청을 전달하는 과정에서 클라이언트가 `https://192.168.1:8080` 으로 요청한 것으로 인지할 수 있다.
+
+애플리케이션 서버에도 `X-Forwarded` 헤더로 알 수 있게 설정해주어야 이를 인지할 수 있다.
+
+예를 들어 톰캣은 RemoteValve 를 제티는 ForwardedRequestCustomizer 를 사용한다.
+
+스프링을 사용한다면 ForwardedHeaderFilter 를 활용해도 좋다.
+
+스프링 부트의 경우는 `server.use-forward-headers` 프로퍼티를 설정하면 된다.
