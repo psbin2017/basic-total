@@ -7,7 +7,7 @@
 | 객체 | 역할 |
 | --- | --- |
 | `DelegatingFilterProxy` | 서블릿 컨테이너의 라이프사이클과 스프링의 `ApplicationContext` 와의 연결 |
-| `FilterChainProxy` | 1. 서블릿을 지원하는 역할 <br/> 2. `SecurityFilterChain` 를 통해 여러 `Filter` 인스턴스로 위임 <br/> 3. `DelegatingFilterProxy` 로 감싸져 있음 |
+| `FilterChainProxy` | 1. 서블릿을 지원하는 역할, 2. `SecurityFilterChain` 를 통해 여러 `Filter` 인스턴스로 위임, 3. `DelegatingFilterProxy` 로 감싸져 있음 |
 | `SecurityFilterChain` | `Filter` 의 묶음 단위 |
 
 ## Filter
