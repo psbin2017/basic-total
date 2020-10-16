@@ -1,4 +1,4 @@
-# 이름/비밀번호 인증
+# 사용자 이름과 비밀번호 인증
 
 사용자 이름과 비밀번호 검증은 사용자를 인증할 때 가장 많이 사용하는 방법 중 하나다. 그렇기 때문에 스프링 시큐리티는 이름과 비밀번호로 인증할 수 있는 방법을 종합적으로 지원한다.
 
@@ -39,7 +39,7 @@ username 과 password 를 제출하면 `UsernamePasswordAuthenticationFilter` �
 
 이전에 설명했던 `SecurityFilterChain` 다이어그램을 기반으로 그린 그림이다.
 
-1. 사용자가 username 과 password 를 제출하면 `UsernamePasswordAuthenticationFilter` 는 `HttpServletRequest` 에서 이 값을 추출해 `Authentication` 유형 중 하나인 `UsernamePasswordAuthenticationToken` 을 만든다.
+1. 사용자가 이름과 비밀번호를 제출하면 `UsernamePasswordAuthenticationFilter` 는 `HttpServletRequest` 에서 이 값을 추출해 `Authentication` 유형 중 하나인 `UsernamePasswordAuthenticationToken` 을 만든다.
 2. 그 다음엔 `UsernamePasswordAuthenticationToken` 을 `AuthenticationManager` 로 넘겨 인증한다. `AuthenticationManager` 상세 동작은 사용자 정보를 저장한 방식에 따라 다르다.
 3. 인증에 실패하면
     - `SecurityContextHolder` 를 비운다.
@@ -69,7 +69,7 @@ protected void configure(HttpSecurity http) {
 </http>
 ```
 
-이 설정에선 디폴트 로그인 페이지로 렌더링한다. 프로덕션에서 사용할 어플리케이션은 대부분 커스텀 로그인 폼이 필요하다. 커스텀 로그인 폼을 설정하는 방법은 아래에 있다.
+이 설정에선 디폴트 로그인 페이지로 렌더링한다. 프로덕션에서 사용할 앱플리케이션은 대부분 커스텀 로그인 폼이 필요하다.
 
 ```java
 protected void configure(HttpSecurity http) throws Exception {
@@ -113,7 +113,7 @@ protected void configure(HttpSecurity http) throws Exception {
             <div>
             <input type="password" name="password" placeholder="Password"/>
             </div>
-            <input type="submit" value="Log in" />
+            <input type="submit" value="Login" />
         </form>
     </body>
 </html>
@@ -125,7 +125,7 @@ protected void configure(HttpSecurity http) throws Exception {
 - CSRF 토큰을 포함해야 하며, 타임리프에서는 자동으로 추가된다.
 - 사용자 이름은 `username` 파라미터로 명시해야 한다.
 - 비밀번호는 `password` 파라미터로 명시해야 한다.
-- HTTP 파라미터 error 가 있으면 사용자가 유효한 username / password 를 제공하지 못했음을 나타낸다.
+- HTTP 파라미터 error 가 있으면 사용자가 유효한 사용자 이름과 비밀번호를 제공하지 못했음을 나타낸다.
 - HTTP 파라미터 logout 이 있으면 사용자가 로그아웃에 성공한 것을 나타낸다.
 
 대부분은 로그인 페이지를 더 커스텀할 필요가 없을 것이다. 하지만 위에 있는 것 이상으로 더 커스텀하고 싶다면 추가 설정을 넣으면 된다. 스프링 MVC 를 사용한다면 `GET /login` 요청을 직접 만든 로그인 템플릿으로 매핑하는 컨트롤러가 필요하다. 다음 코드는 최소한으로 작성한 샘플 `LoginController` 다:
@@ -152,11 +152,11 @@ class LoginController {
 2. 스프링 시큐리티의 `FilterSecurityInterceptor` 에서 `AccessDeniedException` 을 던져 인증되지 않은 요청을 거절했음을 알린다.
 3. 인증되지 않은 사용자이므로 `ExceptionTranslationFilter` 에서 인증을 시작한다. 설정한 `AuthenticationEntryPoint` 는 `BasicAuthenticationEntryPoint` 인스턴스로, WWW-Authenticate 헤더를 전송한다. 이때는 클라이언트가 기존 요청을 다시 전송할 수 있으므로 `RequestCache` 는 보통 요청을 저장하지 않는 `NullRequestCache` 를 사용한다.
 
-클라이언트는 WWW-Authenticate 헤더를 받으면 username 과 password 로 재시도해야 한다는 것을 알고 있다. 다음은 username 과 password 를 처리하는 플로우다:
+클라이언트는 WWW-Authenticate 헤더를 받으면 사용자 이름과 비밀번호로 재시도해야 한다는 것을 알고 있다. 다음은 사용자 이름과 비밀번호를 처리하는 플로우다:
 
 ![basic authentication entry point](./images/basicauthenticationfilter.png)
 
-1. 사용자가 username 과 password 를 제출하면 `UsernamePasswordAuthenticationFilter` 는 `HttpServletRequest` 에서 이 값을 추출해 `Authentication` 유형 중 하나인 `UsernamePasswordAuthenticationToken` 을 만든다.
+1. 사용자가 사용자 이름과 비밀번호를 제출하면 `UsernamePasswordAuthenticationFilter` 는 `HttpServletRequest` 에서 이 값을 추출해 `Authentication` 유형 중 하나인 `UsernamePasswordAuthenticationToken` 을 만든다.
 2. 그다음엔 `UsernamePasswordAuthenticationToken` 을 `AuthenticationManager` 로 넘겨 인증한다. `AuthenticationManager` 상세 동작은 사용자 정보를 저장한 방식에 따라 다르다.
 3. 인증에 실패하면
     - `SecurityContextHolder` 를 비운다.
@@ -190,7 +190,7 @@ protected void configure(HttpSecurity http) {
 
 `DigestAuthenticationFilter` 가 제공하는 다이제스트 인증 지원 방식을 자세히 다룬다.
 
-> 다이제스트 인증은 안전하지 않으므로 최신 어플리케이션에선 사용하지 말아야 한다. 비밀번호를 일반 텍스트나 암호화 형식 또는 MD5 형식으로 저장해야 한다는 게 가장 큰 문제다. 이 저장 형식은 전부 안전하지 않다. 그 대신 다이제스트에선 지원하지 않는, 단방향 적응형 비밀번호 해시 (i.e. bCrypt, PBKDF2, SCrypt 등)를 사용해서 자격증명을 저장해야 한다.
+> 다이제스트 인증은 안전하지 않으므로 최신 애플리케이션에선 사용하지 말아야 한다. 비밀번호를 일반 텍스트나 암호화 형식 또는 MD5 형식으로 저장해야 한다는 게 가장 큰 문제다. 이 저장 형식은 전부 안전하지 않다. 그 대신 다이제스트에선 지원하지 않는, 단방향 적응형 비밀번호 해시 (i.e. bCrypt, PBKDF2, SCrypt 등)를 사용해서 자격증명을 저장해야 한다.
 
 다이제스트 인증은 기본 인증의 많은 문제점을 개선하기 위한 시도였다. 특히 네트워크 상에서 자격증명을 일반 텍스트로 전달하지 않아도 된다. 많은 브라우저가 다이제스트 인증을 지원하고 있다.
 
@@ -335,4 +335,167 @@ XML 기반으로는 간단하게 `User.withDefaultPasswordEncoder` 를 설정할
 - 데이터 소스 설정
 - `JdbcUserDetailsManager` 빈
 
-// TODO
+### Default Schema
+
+스프링 시큐리티는 JDBC 기반 인증을 위한 기본 쿼리를 제공한다. 여기에선 디폴트 쿼리에서 사용되는 디폴트 스키마를 다룬다. 쿼리나 데이터베이스 방언(dialect)을 커스텀한다면 스키마도 함께 바꿔야 한다.
+
+User Schema
+
+`JdbcDaoImpl` 에서 사용자의 비밀번호, 계정 상태 (활성화/비활성화), 권한 (roles) 리스트를 로드하려면 테이블이 있어야 한다. 필요한 디폴트 사용자 스키마는 다음과 같다:
+
+> 디폴트 스키마는 클래스 패스 리소스 `org/springframework/security/core/userdetails/jdbc/users.ddl` 로도 접근할 수 있다.
+
+```sql
+create table users(
+    username varchar_ignorecase(50) not null primary key,
+    password varchar_ignorecase(50) not null,
+    enabled boolean not null
+);
+
+create table authorities (
+    username varchar_ignorecase(50) not null,
+    authority varchar_ignorecase(50) not null,
+    constraint fk_authorities_users foreign key(username) references users(username)
+);
+create unique index ix_auth_username on authorities (username,authority);
+```
+
+오라클도 많이 쓰는 데이터베이스 중 하나지만, 약간 다른 스키마가 필요하다. 오라클의 디폴트 사용자 스키마는 다음과 같다:
+
+```sql
+-- ORACLE DATABASES
+
+CREATE TABLE USERS (
+    USERNAME NVARCHAR2(128) PRIMARY KEY,
+    PASSWORD NVARCHAR2(128) NOT NULL,
+    ENABLED CHAR(1) CHECK (ENABLED IN ('Y','N') ) NOT NULL
+);
+
+
+CREATE TABLE AUTHORITIES (
+    USERNAME NVARCHAR2(128) NOT NULL,
+    AUTHORITY NVARCHAR2(128) NOT NULL
+);
+ALTER TABLE AUTHORITIES ADD CONSTRAINT AUTHORITIES_UNIQUE UNIQUE (USERNAME, AUTHORITY);
+ALTER TABLE AUTHORITIES ADD CONSTRAINT AUTHORITIES_FK1 FOREIGN KEY (USERNAME) REFERENCES USERS (USERNAME) ENABLE;
+```
+
+그룹을 사용하는 어플리케이션은 그룹 스키마도 필요하다. 디폴트 그룹 스키마는 다음과 같다:
+
+```sql
+create table groups (
+    id bigint generated by default as identity(start with 0) primary key,
+    group_name varchar_ignorecase(50) not null
+);
+
+create table group_authorities (
+    group_id bigint not null,
+    authority varchar(50) not null,
+    constraint fk_group_authorities_group foreign key(group_id) references groups(id)
+);
+
+create table group_members (
+    id bigint generated by default as identity(start with 0) primary key,
+    username varchar(50) not null,
+    group_id bigint not null,
+    constraint fk_group_members_group foreign key(group_id) references groups(id)
+);
+```
+
+### DataSource
+
+`JdbcUserDetailsManager` 를 설정하려면 먼저 `DataSource` 가 있어야 한다. 이 예제에서는 디폴트 사용자 스키마로 초기화하는 임베디드 데이터소스를 설정한다.
+
+```java
+@Bean
+DataSource dataSource() {
+    return new EmbeddedDatabaseBuilder()
+        .setType(H2)
+        .addScript("classpath:org/springframework/security/core/userdetails/jdbc/users.ddl")
+        .build();
+}
+```
+
+```xml
+<jdbc:embedded-database>
+    <jdbc:script location="classpath:org/springframework/security/core/userdetails/jdbc/users.ddl"/>
+</jdbc:embedded-database>
+```
+
+### JdbcUserDetailsManager
+
+이 예제에선 스프링 부트 CLI 로 비밀번호 `password` 를 인코딩했으며, 인코딩된 값 `{bcrypt}$2a$10$GRLdNijSQMUvl/au9ofL.eDwmoohzzS7.rmNSJZ.0FxO/BTk76klW` 를 얻었다. 비밀번호를 저장하는 방법은 `PasswordEncoder` 섹션을 참고하라.
+
+```java
+@Bean
+UserDetailsManager users(DataSource dataSource) {
+    UserDetails user = User.builder()
+        .username("user")
+        .password("{bcrypt}$2a$10$GRLdNijSQMUvl/au9ofL.eDwmoohzzS7.rmNSJZ.0FxO/BTk76klW")
+        .roles("USER")
+        .build();
+    UserDetails admin = User.builder()
+        .username("admin")
+        .password("{bcrypt}$2a$10$GRLdNijSQMUvl/au9ofL.eDwmoohzzS7.rmNSJZ.0FxO/BTk76klW")
+        .roles("USER", "ADMIN")
+        .build();
+    JdbcUserDetailsManager users = new JdbcUserDetailsManager(dataSource);
+    users.createUser(user);
+    users.createUser(admin);
+    return users;
+}
+```
+
+```xml
+<jdbc-user-service>
+    <user name="user"
+        password="{bcrypt}$2a$10$GRLdNijSQMUvl/au9ofL.eDwmoohzzS7.rmNSJZ.0FxO/BTk76klW"
+        authorities="ROLE_USER" />
+    <user name="admin"
+        password="{bcrypt}$2a$10$GRLdNijSQMUvl/au9ofL.eDwmoohzzS7.rmNSJZ.0FxO/BTk76klW"
+        authorities="ROLE_USER,ROLE_ADMIN" />
+</jdbc-user-service>
+```
+
+## UserDetails
+
+`UserDetails` 는 `UserDetailsService` 가 리턴하는 값이다. `DaoAuthenticationProvider` 가 `UserDetails` 를 인증하고, 이 `UserDetails` 를 `principal` 로 가진 `Authentication` 을 리턴한다.
+
+## UserDetailsService
+
+`UserDetailsService` 는 `DaoAuthenticationProvider` 가 사용자 이름과 비밀번호로 인증할 때 필요한 사용자 이름과 비밀번호를 다른 속성을 조회할 때 사용한다. 스프링 시큐리티가 제공하는 `UserDetailsService` 는 인메모리와 JDBC 기반 구현체가 있다.
+
+커스텀 인증을 정의하려면 커스텀 `UserDetailsService` 를 빈으로 만들면 된다. `AuthenticationManagerBuilder` 를 사용하지 않고 `AuthenticationProviderBean` 빈도 정의하지 않았을 때 사용하는 방법이다.
+
+```java
+@Bean
+CustomUserDetailsService customUserDetailsService() {
+    return new CustomUserDetailsService();
+}
+```
+
+```xml
+<b:bean class="example.CustomUserDetailsService"/>
+```
+
+## PasswordEncoder
+
+서블릿에서 스프링 시큐리티를 사용하면 `PasswordEncoder` 를 통합해 비밀번호를 안전하게 저장할 수 있다. 스프링 시큐리티가 사용하는 `PasswordEncoder` 구현체를 커스텀하려면 `PasswordEncoder` 빈을 정의하면 된다.
+
+## DaoAuthenticationProvider
+
+`DaoAuthenticationProvider` 는 `UserDetailsService` 와 `PasswordEncoder` 로 사용자 이름과 비밀번호를 인증하는 `AuthenticationProvider` 구현체다.
+
+스프링 시큐리티에서 `DaoAuthenticationProvider` 가 동작하는 방식을 살펴보자.
+
+![Dao Authentication Provider](./images/daoauthenticationprovider.png)
+
+1. 사용자 이름과 비밀번호를 조회하는 인증 `Filter` 에서 `UsernamePasswordAuthenticationToken` 을 `AuthenticationManager` 로 넘긴다. `AuthenticationManager` 는 `ProviderManager` 가 구현하고 있다.
+2. 이 `ProviderManager` 는 `DaoAuthenticationProvider` 를 `AuthenticationProvider` 로 사용하도록 설정돼 있다.
+3. `DaoAuthenticationProvider` 는 `UserDetailsService` 에서 `UserDetails` 를 조회한다.
+4. 그다음 `DaoAuthenticationProvider` 는 이전 단계에서 얻은 `UserDetails` 에 있는 비밀번호를 `PasswordEncoder` 로 검증한다.
+5. 인증에 성공하면 `UsernamePasswordAuthenticationToken` 타입의 `Authentication` 을 반환하며, 이 객체는 `UserDetailsService` 가 리턴한 `UserDetails` 를 principal 로 가지고 있다. 결국에 리턴한 `UsernamePasswordAuthenticationToken` 은 인증 `Filter` 에서 `SecurityContextHolder` 로 세팅된다.
+
+## LDAP Authentication
+
+생략
