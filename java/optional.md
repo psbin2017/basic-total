@@ -1,13 +1,9 @@
 # Optional
 
-> 규칙 #1 : Optional 변수 또는 return 값에 null 을 사용하면 안된다.
-> 규칙 #2: Optional 이 있다는 것을 증명할 수 없다면 `Optional.get()` 사용하지 않는다.
-> 규칙 #3: `Optional.isPresent()` 와 `Optional.get()` 에 대한을 선호하라.
-> 규칙 #4: 일반적으로 값을 얻기위해 메소드를 연결하는 특정 목적을 위해서 Optional 을 만드는 것은 부적절하다.
-> 규칙 #5: Optional 체이닝이 너무 중첩되거나 `Optional<Optional<T>>` 의 중간 결과가 있는 경우 복잡해진다.
-> 규칙 #6: 필드, 메소드 매개 변수 및 컬렉션에서 선택사항을 사용하지마라.
-
 [Optional - The Mother of All Bikesheds by Stuart Marks](https://www.youtube.com/watch?v=Ej0sss6cq14)
+[Java Optional 바르게 쓰기](http://homoefficio.github.io/2019/10/03/Java-Optional-%EB%B0%94%EB%A5%B4%EA%B2%8C-%EC%93%B0%EA%B8%B0/)
+
+> 메소드가 반환할 결과 값이 ‘없음’ 을 명백하게 표현할 필요가 있고, null 을 반환하면 에러를 유발할 가능성이 높은 상황에서 메소드의 반환 타입으로 Optional 을 사용하자는 것이 Optional 을 만든 주된 목적이다.
 
 `Optional<T>` Java8 에 도입되었다.
 
@@ -19,6 +15,36 @@
 Primitive 타입 특수화
 
 - Optional 자체는 참조 타입이다. 그리고 Optional 이 null 일 수 도 있지만 **DON'T**
+
+## 주의사항 규칙 정리
+
+> 규칙 #1 : Optional 변수 또는 return 값에 null 을 사용하면 안된다.
+> 규칙 #2: Optional 이 있다는 것을 증명할 수 없다면 `Optional.get()` 사용하지 않는다.
+> 규칙 #3: `Optional.isPresent()` 와 `Optional.get()` 에 대한을 선호하라.
+> 규칙 #4: 일반적으로 값을 얻기위해 메소드를 연결하는 특정 목적을 위해서 Optional 을 만드는 것은 부적절하다.
+> 규칙 #5: Optional 체이닝이 너무 중첩되거나 `Optional<Optional<T>>` 의 중간 결과가 있는 경우 복잡해진다.
+> 규칙 #6: 필드, 메소드 매개 변수 및 컬렉션에서 선택사항을 사용하지마라.
+> 규칙 #7: Optional 에서 ID 에 민감한 작업에 사용하지 않는다.
+
+### 본론 주의사항 정리
+
+> `isPresent()`-`get()` 대신 `orElse()`/`orElseGet()`/`orElseThrow()`
+>
+> `orElse(new ...)` 대신 `orElseGet(() -> new ...`)
+>
+> 단지 값을 얻을 목적이라면 Optional 대신 null 비교
+>
+> Optional 대신 비어있는 컬렉션 반환
+>
+> Optional 을 필드로 사용 금지
+>
+> Optional 을 생성자나 메서드 인자로 사용 금지
+>
+> Optional 을 컬렉션의 원소로 사용 금지
+>
+> `of()`, `ofNullable()` 혼동 주의
+>
+> `Optional<T>` 대신 `OptionalInt`, `OptionalLong`, `OptionalDouble`
 
 ## Optional 의 유용함
 
@@ -339,54 +365,52 @@ myMethod(Optional.empty());
 - nullable 매개 변수는 괜찮다. (declasse 하다면)
   - 라이브러리 코드는 인수 확인을 담당해야한다.
 
-*********************************************TODO*********************************************
-
 ## Bikeshedding
 
-### Why Isn't Optional Serializable?
+### Optional 직렬화(Serializable)가 아닌 이유
 
-Background: Value types - Project Valhalla
+배경: 값 타입 - Project Valhalla
 
-- an "object" that has no notion of identity
-- "codes like a class, works like an int"
-- we eventually want to convert Optional into a value type
+- 정체성 개념이 없는 "객체"
+- "클래스와 같은 코드, int 처럼 작동"
+- Optional 을 값 타입으로 변환하고자 한다.
 
-Disclaimer from Optional's javadoc:
+Optional 의 javadoc 의 면책 조항:
 
-This is a value-based class; use of identity-sensitive operations (including reference equality (==), identity hash code, or synchronization) on instances of Optional may have unpredictable results and should be avoided.
+이것은 값 기반(value-based) 클래스이다. Optional 인스턴스에서 ID 에 민감한 작업(참조 동일 (==), ID 해시 코드 또는 동기화 포함)에 사용하면 예측 불가능한 결과가 발생 할 수 있기에 피해야한다.
 
-> Rule #7: Avoid using identity-sensitive operations on Optionals.
+> 규칙 #7: Optional 에서 ID 에 민감한 작업에 사용하지 않는다.
 
-### Serialization Impact on Future Evolution
+### 미래 진화에 대한 Serialization 영향도
 
-- JDK rule: **forward and backward** serialization compatibility across releases
-- If Optional were serializable today, it would be serialized as an Object
-  - It'll always be serialized as an Obejct, even if it eventually becomes a value type
-- Serialization inherently depends on object identity
-- Consequences of Optional being serializable
-  - it might prevent it from being converted into a value type in the future
-  - deserializing an Optional might result in a "boxed" value type
+- JDK 규칙: 릴리스 간의 **정방향과 역방향** 직렬화 호환성
+- Optional 이 지금 직렬화가 가능하다면 Object 로 직렬화해야한다.
+  - 결국 값 타입이 되더라도 항상 Object 로 직렬화 된다.
+- 직별화는 본직적으로 객체의 ID 에 따라 다르다.
+- Optional 이 직렬화 될 수 있는 결과
+  - 나중에 값 타입으로 변환되지 않을 수 있다.
+  - Optional 을 역 직렬화하면 "boxed" 값 타입이 발생할 수 있다.
 
-### Why Not Use Optional in Fields
+### 필드에서 Optional 을 사용하지 않는 이유
 
-More a style issue than a correctness issue
+정확성 문제보다는 스타일 문제
 
-- usually there's a better way to model absence of a value
-- use of Optional in fields often arises from slavish desire to eliminate nullable fields
-- remember, eliminating nulls isn't a goal of Optional
+- 일반적으로 가치 부재를 모델링하는 더 좋은 방법이 있다.
+- 필드에서 Optional 의 사용은 종종 nullable 필드를 제거하려는 욕구로 발생한다.
+- 그러나 명심해야한다 **null 을 제거하는 것이 Optional 의 목표가 아니다.**
 
-Using Optional in fields...
+필드에서 Optional 을 사용한다는 것은...
 
-- creates another object for every field
-- introduces a dependent load from memory on every field read
-- clutters up your code
-- to what benefit? ability to chain methods?
+- 모든 필드에 대해 다른 객체를 만들게 된다.
+- 모든 필드를 읽을 때 마다 메모리에 의존성을 주입한다.
+- 코드의 복잡도를 높인다.
+- Optional 을 통해서 무슨 혜택을 가져올지 애매하다. 단순히 메소드 체이닝을 사용하려고?
 
-Colebourne: Optional, A Pramatic Approach
+Colebourne: Optional 에 대한 실용적인 접근
 
-- use nullable fields, getters should return Optional
+- nullable 필드를 사용한다. getter 는 Optional 을 반환해야한다.
 
-Ernst: Nothing is Better Than the Optional Type
+Ernst: Optional 타입보다 좋은 것은 없다.
 
-- use Nullness Checker
-- glass is one-quarter full
+- Nullness Checker 를 사용한다.
+- one-quarter full
