@@ -1,0 +1,32 @@
+# 💎 2장 객체의 생성과 파괴
+
+학습 내용 출처: [이펙티브 자바 3판](http://ebook.insightbook.co.kr/book/66)
+
+본 챕터의 공통 주제는 다음과 같다.
+
+1. 객체를 만들어야할 때와 만들지 않아야 할 때에 대한 구분
+2. 올바른 객체 생성 방법
+3. 불필요한 객체 생성을 피하는 방법
+4. 객체의 파괴를 보장하며 객체 파괴 이전에 수행해야 할 작업을 관리하는 방법
+
+## ✨ 아이템 9: try-finally 보다는 try-with-resources 를 사용하라
+
+자바 라이브러리는 close 메서드로 직접 호출해 자원을 닫아줘야하는 것이 많다. 자원 닫기는 클라이언트가 놓치기 쉽기 때문에 예측할 수 없는 성능 문제로 이어질 수 있다. 앞서 item08 에서 본 `finalizer/cleaner` 를 활용하여 안전망을 만들 수 있지만 믿을만한 구현체는 아니다.
+
+자바7 에서 만들어진 try-with-resources 덕분에 쉬운 문법으로 해결되었다.
+
+```java
+static void copy(String src, String dst) throws IOException {
+    try (InputStream in = new FileInputStream(src);
+        OutputStream out = new FileOutputStream(dst)) {
+        
+        byte[] buf = new byte[BUFFER_SIZE];
+        int n;
+        while ( (n = in.read(buf)) >= 0 ) {
+            out.write(buf, 0, n);
+        }
+    }
+}
+```
+
+1개 뿐만 아니라 복수의 자원도 짧으면서 직관적이게 활용하여 자원을 닫을 수 있다.
