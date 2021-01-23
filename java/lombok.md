@@ -378,7 +378,8 @@ Lombok 은 버전업되면서 내재된 사용법에 대한 버그를 개선하�
 
 - [Lombok 사용상 주의점(Pitfall)](http://kwonnam.pe.kr/wiki/java/lombok/pitfall)
 - [실무에서 Lombok 사용법](https://cheese10yun.github.io/lombok/)
-- [lombok 사용 시 주의사항](https://stackoverflow.com/questions/38572566/warning-equals-hashcode-on-data-annotation-lombok-with-inheritance)
-- [](https://lng1982.tistory.com/300)
+- [Warning equals/hashCode on @Data annotation lombok with inheritance
+](https://stackoverflow.com/questions/38572566/warning-equals-hashcode-on-data-annotation-lombok-with-inheritance)
+- [lombok 사용 시 주의사항](https://lng1982.tistory.com/300)
 - [Spring Boot 1.5.15, 2.0.3 출시, 롬복(lombok) 1.16.22 관련 내용](https://java.ihoney.pe.kr/510)
 - [Lombok 사용법과 주의사항](https://hyoj.github.io/blog/java/basic/lombok/#getter-setter)
