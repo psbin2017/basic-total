@@ -1,6 +1,6 @@
 # ✨ 아이템 53: 가변인수는 신중히 사용하라
 
-[]()
+[VarArgs](https://github.com/psbin2017/garbage-collection/blob/master/gc/src/test/java/com/collection/gc/sample/method/VarArgs.java)
 
 가변인수 메소드는 명시한 타입의 인수를 0 개이상 받을 수 있다. 가변 인수 메소드를 호출하면 먼저 인수의 개수와 길이가 같은 배열을 만들고 인수들을 이 배열에 저장하여 가변인수 메소드에 건네준다.
 
