@@ -19,7 +19,7 @@
 
 옵셔널은 원소를 최대 1개만 가질 수 있는 "불변" 컬렉션이다. 옵셔널을 반환하는 메소드는 예외를 던지는 메소드보다 유연하고 사용하기 쉬우며, null 을 반환하는 메소드보다 오류 가능성이 작다.
 
-[]()
+[OptionalReturn](https://github.com/psbin2017/garbage-collection/blob/master/gc/src/test/java/com/collection/gc/sample/method/OptionalReturn.java)
 
 **옵셔널을 반환하는 메소드는 절대 null 을 반환하지 말자.** 옵셔널 반환을 선택하는 기준은 무엇일까?
 
