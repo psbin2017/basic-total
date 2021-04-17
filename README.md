@@ -13,9 +13,10 @@
 
 | 도서 명 | 구분 | 진도 | 목표 | 비고 | 시작 및 종료 기간 |
 | --- | --- | --- | --- | --- | --- |
-| 🟢 이펙티브자바 3판 | `JAVA` | 9장 일반적인 프로그래밍 원칙 | 완독 및 학습 내용 정리 | 주말 스터디 | 2021-01 ~ |
+| 🟢 이펙티브자바 3판 | `JAVA` | 10장 예외 | 완독 및 학습 내용 정리 | 주말 스터디 | 2021-01 ~ |
 | 🟢 객체지향의 사실과 오해 | `OOP` | 4장 역할, 책임, 협력 | OOP 뽀개기 | - | 2021-03 ~ |
 | 🟢 테스트 주도 개발 | `TDD`, `OOP` | 3부 테스트 주도 개발의 패턴 | TDD 학습 및 생활화 | - | 2021-03 ~ |
+| 🟢 GoF 의 디자인 패턴 | 디자인 패턴 | 3부 생성 패턴 | [repository](https://github.com/psbin2017/like-multiplication-table/tree/master/src/main/java/com/multiplication/designpattern) | - | 2021-04 ~ |
 | 🟡 자바 ORM 표준 JPA 프로그래밍 | JPA | 9장 값타입 | 완독 및 도메인 설계와 친해지기 | 자꾸 회귀해서 인강 병행 | 2021-01 ~ |
 | 🟡 스프링 부트와 AWS 로 혼자 구현하는 웹 서비스 | Totalize | 9장 Travis CI 자동 배포화 | 완독 및 실습 | Travis CI + Docker 연동하면서 삽질 중 (JPA 인강 때 적용하기) | 2021-01 ~ |
 | 🔴 윤성우의 열혈 자료구조 | 자료구조 | 3장 링크드 리스트 | 완독 | 아는 내용 빠르게 넘어가고 진도 빼기 | 2021-03 ~ |
@@ -32,9 +33,12 @@
 ## 학습
 
 - Java
+  - jdk 버전별 특징
+  - GC 동작 방식과 특징
   - JVM ++
   - multi thread programming ++
   - OOP ++
+  - 자료 구조 및 알고리즘
 - Spring Boot (Spring)
   - Batch
   - Security (웹 보안 지식 항목)
