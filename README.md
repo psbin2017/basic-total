@@ -33,7 +33,7 @@
 ## 학습
 
 - Java
-  - jdk 버전별 특징
+  - [jdk 버전별 특징 ing](/java/version_feature.md)
   - GC 동작 방식과 특징
   - JVM ++
   - multi thread programming ++
