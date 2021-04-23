@@ -177,3 +177,84 @@ services:
 | `restart` | always ... 컨테이너가 죽으면 자동으로 실행 |
 | `ports` | `-p` 포트 |
 | `environment` | `-e` 환경 변수 |
+
+## Dockerfile
+
+파일 Dockerfile 을 통하여 일련의 도커 작업을 작성한다.
+
+| 명령어 | 설명 |
+| --- | --- |
+| `FROM` | 기본 이미지 |
+| `RUN` | 쉘 명령어 실행 |
+| `CMD` | 컨테이너 기본 실행 명령어 (Entrypoint 인자로 사용) |
+| `EXPOSE` | 오픈되는 포트 정보 |
+| `ENV` | 환경변수 설정 |
+| `ADD` | 파일 또는 디렉토리 추가. URL/ZIP 사용 가능 |
+| `COPY` | 파일 또는 디렉토리 추가 |
+| `ENTRYPOINT` | 컨테이너 기본 실행 명령어 |
+| `VOLUME` | 외부 마운트 포인트 생성 |
+| `USER` | `RUN` / `CMD` / `ENTRYPOINT` 를 실행하는 사용자 |
+| `WORKDIR` | 작업 디렉토리 설정 |
+| `ARGS` | 빌드타임 환경변수 설정 |
+| `LABEL` | key - value 데이터 |
+| `ONBUILD` | 다른 빌드의 베이스로 사용될 때 사용하는 명령어 |
+
+## docker build
+
+나만의 커스텀 도커 이미지를 만든다. [document](https://docs.docker.com/engine/reference/builder/)
+
+> docker build -t {이미지명:이미지태그} {빌드 컨텍스트}
+
+- `-f <Dockerfile 위치>` 로 옵션을 사용하여 다른 위치에 Dockerfile 파일 사용이 가능하다.
+- `-t` 명령어로 도커 이미지 이름을 지정한다.
+- `{네임스페이스}/{이미지이름}:{태그}` 형식
+
+마지막에는 빌드 컨텍스트를 사용하는데 현재 디렉토리를 의미하는 점(.)을 주로 사용한다. 물론 다른 디렉토리도 지정 가능하다.
+
+### case 1 install git
+
+```text
+// Dockerfile
+FRON ubuntu:lastest
+RUN apt-get update
+RUN apt-get install -y git
+
+// Command
+docker build -t ubuntu:git-dockerfile .
+docker images | grep ubuntu
+```
+
+### case 2 install node.js (webapplication)
+
+```text
+// Dockerfile
+# 1. node 설치
+FROM    ubuntu:20.04
+RUN     apt-get update
+RUN     DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs npm
+
+# 2. 소스 복사
+COPY    . /usr/src/app
+
+# 3. Nodejs 패키지 설치
+WORKDIR /usr/src/app
+RUN     npm install
+
+# 4. WEB 서버 실행 (Listen 포트 정의)
+EXPOSE 3000
+CMD    node app.js
+```
+
+Dockerfile 은 이미지화 한 수준이나 명령어 순서에 따라 최적화를 할 수 있다. (시행착오가 있기 마련이다.)
+
+## 이미지 푸쉬/풀
+
+이미지 저장소(도커 허브)에 도커 이미지를 푸쉬하고 풀할 수 있다.
+
+주의할 점은 무료 계정은 이미지가 private 하지 않아 모든 사용자가 사용할 수 있다.
+
+```text
+docker login
+docker push {ID}/example
+docker pull {ID}/example
+```
