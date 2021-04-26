@@ -27,6 +27,13 @@
 1. [출처 1](https://itwiki.kr/w/%EC%B0%B8%EC%A1%B0_%EC%A7%80%EC%97%AD%EC%84%B1)
 2. [출처 2](https://en.wikipedia.org/wiki/Locality_of_reference)
 
+## 💎 11장: 동시성
+
+원자성: 어떤 것이 더 이상 쪼개질 수 없는 성질을 말한다.
+
+안전 실패(safety failure): 프로그램이 잘못된 결과를 계산할 경우를 안전 실패라고 한다.
+
+안전 발행(safety publication): 객체에서 공유하는 부분만 동기화를 진행하며, 다른 스레드에서 동기화 없이 자유롭게 값을 읽을 수 있는 것. 해당 객체는 불변(effectively immutable)으로 볼 수 있다.
 ## 디자인 패턴
 
 - 플라이웨이트(`Flyweight`)
