@@ -1,5 +1,9 @@
 # JDK
 
+## Java 5
+
+시간 관련 Enum `java.util.concurrent.TimeUnit` 추가
+
 ## Java 7
 
 String in switch, Try Catch Resource 등
