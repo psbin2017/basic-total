@@ -13,7 +13,7 @@
 
 | 도서 명 | 구분 | 진도 | 목표 | 비고 | 시작 및 종료 기간 |
 | --- | --- | --- | --- | --- | --- |
-| 🟢 이펙티브자바 3판 | `JAVA` | 11장 동시성 | 완독 및 학습 내용 정리 | 주말 스터디 | 2021-01 ~ |
+| 🟢 이펙티브자바 3판 | `JAVA` | 12장 직렬화 | 완독 및 학습 내용 정리 | 주말 스터디 | 2021-01 ~ |
 | 🟢 객체지향의 사실과 오해 | `OOP` | 4장 역할, 책임, 협력 | OOP 뽀개기 | - | 2021-03 ~ |
 | 🟢 테스트 주도 개발 | `TDD`, `OOP` | 3부 테스트 주도 개발의 패턴 | TDD 학습 및 생활화 | - | 2021-03 ~ |
 | 🟢 GoF 의 디자인 패턴 | 디자인 패턴 | 3부 생성 패턴 | [repository](https://github.com/psbin2017/like-multiplication-table/tree/master/src/main/java/com/multiplication/designpattern) | - | 2021-04 ~ |
@@ -46,8 +46,12 @@
 - Java
   - [jdk 버전별 특징 ing](/java/version_feature.md)
   - GC 동작 방식과 특징
+  - 멀티 스레드 프로그래밍
+    - 락 분할(lock splitting)
+    - 락 스트라이핑(lock striping)
+    - 비차단 동시성 제어(nonblocking concurrency control)
+    - 포크-조인 태스크 ... (병렬 스트림의 사용체)
   - JVM ++
-  - multi thread programming ++
   - OOP ++
   - 자료 구조 및 알고리즘
 - Spring Boot (Spring)
