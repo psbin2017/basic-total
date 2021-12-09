@@ -10,6 +10,25 @@
 
 `ToyEventListener` : `ApplicationListener<ApplicationReadyEvent>` 로 캐시 메소드를 호출하여 정상적으로 캐싱됨.
 
+## local cache VS global cache
+
+> local cache
+
+- 인스턴스마다 캐시를 가지고 있다.
+- 서버 내부에서 동작하기 때문에 속도가 비교하여 빠르다.
+- 캐시의 라이프 사이클이 인스턴스마다 다를 수 있다. (구현방법에 따라 다르지만 이를 다른 인스턴스에 전파해야할 수 있다.)
+
+> global cache
+
+- 외부에서 캐시 스토리지를 가지고 있다.
+- 네트워크를 통해 조회하기 때문에 비교적 느리다. (상대적일 뿐 ... 빠름)
+- 하나의 캐시를 N 개의 인스턴스가 바라본다. (공유가 쉽다.)
+- 외부에 있기에 장애 복구에 대한 대처 방안을 준비해야 한다.
+
+정답은 없지만 인스턴스의 갯수가 작고 외부에서 공유해서 사용할 가치가 없는 경우 local cache 를 선택
+
+이후 확장되어야 하는 경우 global cache 로 전환하는 것을 고려 (물론 설계에 따라 최초 global cache 로 도 좋을 것 같다.)
+
 ## fail over
 
 캐시 관련 어노테이션은 `CacheErrorHandler` 구현하여 등록하여 `ConnectionException` 등과 같은 예외 발생시에 대한 핸들링이 가능하다.
