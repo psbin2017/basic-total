@@ -53,3 +53,13 @@ pidstat 1
 # ctrl + s 업데이트 중지, ctrl + q 업데이트 시작
 top
 ```
+
+## 커넥션 체크
+
+```text
+# 커넥션 수
+netstat -antop | grep LISTEN | grep :80 wc -l
+
+# 커넥션 유형
+netstat -antop | grep LISTEN | grep :80
+```
