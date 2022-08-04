@@ -122,3 +122,18 @@ Broker #1 장애 발생시?
   - 신규 토픽, 파티션 감지 기능 및 토픽 설정 자동 sync 기능
   - 양방향 클러스터 토픽 복제
   - 미러링 모니터링을 위한 다양한 metric (latency, count 등) 제공
+
+## config/server.properties
+
+| properties | 설명 |
+| --- | --- |
+| `broker.id` | 정수로 선언된 브로커 번호. 클러스터 내 고유 번호로 지정 |
+| `listeners` | kafka 통신에 사용되는 host:port |
+| `advertised.listeners` | kafka client 가 접속할 host:port |
+| `log.dirs` | 메시지 저장 디스크 디렉토리, 세그먼트가 저장된다. |
+| `log.segment.bytes` | 메시지가 저장되는 파일 크기 단위 |
+| `log.retention.ms` | 메시지를 얼마나 보존할지 지정. 닫힌 세그먼트를 처리 |
+| `zookeeper.connect` | 브로커의 메타데이터를 저장하는 주키퍼 위치 |
+| `auto.create.topics.enable` | 자동으로 토픽이 생성될지 여부 |
+| `num.paritions` | 자동 생성된 토픽의 defalut parition 개수 |
+| `message.max.bytes` | kafka broker 에 사용하는 메시지의 최대 크기 |
