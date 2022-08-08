@@ -131,6 +131,44 @@ GC 를 수행하지 않는다면 OOME (`java.lang.OutOfMemoryError: PermGen spac
 
 메모리가 부족한경우 힙 메모리의 GC 를 수행하는데 수행했음에도 불구하고 새로운 객체를 할당할 수 없는 경우 OOME 가 발생한다. 빠르게 해결해야하는 경우 `-Xmx` 와 `-Xms` 메모리를 늘려보는 방법이 있다.
 
+## GC 의 종류
+
+### Serial GC
+
+- GC 를 처리하는 스레드가 1개
+- 다른 GC 에 비해 stop-the-world 의 시간이 길다
+- Mark-Compact(Sweep 포함) 알고리즘 사용
+
+### Parallel GC
+
+- Java 8 의 기본 GC
+- Young Generation 의 GC 를 멀티 스레드로 실행
+- Serial GC 에 비하여 stop-the-world 의 시간 감소
+
+### Parallel Old GC
+
+- Parallel GC 에서 Old 영역을 포함하여 멀티 스레드로 실행
+- Mark-Summary-Compact 알고리즘 사용 (sweep: 단일 스레드로 old 를 색인, summary: 멀티 스레드가 old 를 **분리** 색인)
+
+## CMS GC (Concurrent Mark Sweep)
+
+- stop-the-world 시간을 줄이기 위해 고안됨
+- compact 과정이 없음
+- 메모리 단편화 과정 문제가 있음
+
+## G1 GC (Garbage First)
+
+- CMS GC 를 개선한 GC
+- Java 9+ 의 기본 GC
+- Heap 을 일정 크기의 Region 으로 나눔
+- 전체 Heap 을 색인하는 것이아닌 Region 단위로 탐색
+- compact 진행
+
+1. Inital Mark : GC Root 에서 참조하는 객체들을 우선 식별
+2. Concurrent Mark : 이전 단계에 식별한 객체들이 참조하는 모든 객체 추적
+3. Remark : 이전 단계에서 식별한 객체를 다시 추적. 추가되거나 참조가 끊긴 객체를 확정
+4. Concurrent Sweep : 최종적으로 unreachable 한 객체들을 삭제
+
 ## 상식
 
 - Hotspot VM의 GC는 Arena라는 메모리 영역에서 작동한다.
@@ -144,3 +182,4 @@ GC 를 수행하지 않는다면 OOME (`java.lang.OutOfMemoryError: PermGen spac
 ## 학습 내용 참고 출처
 
 - [(JVM) Garbage Collection Basic](https://perfectacle.github.io/2019/05/07/jvm-gc-basic/?fbclid=IwAR2RrYl96TgWtzzmrQmLzWNG69EtGA_7-13M263CNk1SF6nsbaE-p8fEeYA#%EC%95%8C%EC%95%84%EB%91%90%EB%A9%B4-%EC%A2%8B%EC%9D%84-%EC%83%81%EC%8B%9D)
+- [[10분 테코톡] 🐥엘리의 GC](https://www.youtube.com/watch?v=Fe3TVCEJhzo)
