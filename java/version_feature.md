@@ -88,6 +88,194 @@ Permanent Generation (PermGen) 은 완전하게 제거되어 Metaspace 라는 �
 
 [var 키워드를 이용한 지역변수 선언 및 타입 추론 가능](https://www.youtube.com/watch?v=tjj-XLk4CSA)
 
-## [Java 11](https://www.oracle.com/java/technologies/javase/11-relnote-issues.html)
+## Java 11
 
-// TODO
+// TODO https://www.oracle.com/java/technologies/javase/11-relnote-issues.html
+
+## Java 12
+
+## Java 13
+
+## Java 14
+
+### 개선된 스위치 문법
+
+12 에서 미리보기로 시작하여 14 에서 정식지원함
+
+```java
+// before
+switch (day) {
+    case MONDAY:
+    case FRIDAY:
+    case SUNDAY:
+        System.out.println(6);
+        break;
+    case TUESDAY:
+        System.out.println(7);
+        break;
+    case THURSDAY:
+    case SATURDAY:
+        System.out.println(8);
+        break;
+    case WEDNESDAY:
+        System.out.println(9);
+        break;
+}
+
+// after
+switch (day) {
+    case MONDAY, FRIDAY, SUNDAY -> System.out.println(6);
+    case TUESDAY                -> System.out.println(7);
+    case THURSDAY, SATURDAY     -> System.out.println(8);
+    case WEDNESDAY              -> System.out.println(9);
+}
+```
+
+추가로 yield 키워드를 사용가능하다. (참고로 변수명으로 쓸 수 있음)
+
+```java
+Day day = Day.WEDNESDAY;
+int numLetters = switch (day) {
+    case MONDAY:
+    case FRIDAY:
+    case SUNDAY:
+        System.out.println(6);
+        yield 6;
+    case TUESDAY:
+        System.out.println(7);
+        yield 7;
+    case THURSDAY:
+    case SATURDAY:
+        System.out.println(8);
+        yield 8;
+    case WEDNESDAY:
+        System.out.println(9);
+        yield 9;
+    default:
+        throw new IllegalStateException("Invalid day: " + day);
+};
+System.out.println(numLetters);
+```
+
+## Java 15
+
+## Java 16
+
+### intanceof 패턴 매칭
+
+[document](https://openjdk.org/jeps/394)
+
+14 에서 미리보기로 시작하여 16 에 정식지원함.
+
+```java
+// before
+if (obj instanceof String) {
+    String o = (String) obj;
+    // ...
+}
+
+// after
+if (obj instanceof String) {
+    // obj 는 String 으로 간주됨
+    // ...
+}
+```
+
+`equals()`
+
+```java
+// before
+@Override
+public boolean equals(Object o) {
+    if  (!(o instanceof Other other)) {
+        return flase;
+    }
+
+    Other other = (Other) o;
+    return
+        && x == other.x
+        && y == other.y;
+}
+
+// after
+@Override
+public boolean equals(Object o) {
+    return (o instanceof Other other)
+        && x == other.x
+        && y == other.y;
+}
+```
+
+### 레코드 클래스
+
+[document](https://docs.oracle.com/en/java/javase/15/language/records.html)
+
+14 에서 미리보기로 시작하여 16에서 정식지원함.
+
+```java
+// before
+public final class Rectangle {
+    private final double length;
+    private final double width;
+
+    public Rectangle(double length, double width) {
+        this.length = length;
+        this.width = width;
+    }
+
+    double length() { return this.length; }
+    double width()  { return this.width; }
+
+    // Implementation of equals() and hashCode(), which specify
+    // that two record objects are equal if they
+    // are of the same type and contain equal field values.
+    public boolean equals...
+    public int hashCode...
+
+    // An implementation of toString() that returns a string
+    // representation of all the record class's fields,
+    // including their names.
+    public String toString() {...}
+}
+
+// after
+record Rectangle(double length, double width) {
+}
+```
+
+## Java 17
+
+### 봉인 클래스
+
+- [document](https://openjdk.org/jeps/409)
+- [document-2](https://docs.oracle.com/en/java/javase/15/language/sealed-classes-and-interfaces.html)
+
+15 에서 미리보기로 시작하여 17 에 정식지원함.
+
+```java
+public sealed class Shape
+    permits Circle, Square, Rectangle {
+}
+
+public final class Circle extends Shape {
+    public float radius;
+}
+
+public non-sealed class Square extends Shape {
+   public double side;
+}
+
+public sealed class Rectangle extends Shape permits FilledRectangle {
+    public double length, width;
+}
+
+public final class FilledRectangle extends Rectangle {
+    public int red, green, blue;
+}
+```
+
+상속 가능한 클래스 또는 인터페이스를 지정할 수 있다. 알려지지 않은 서브 클래스에 대한 관심사가 아니라 알려진 서브 클래스를 통제하는 것에 목적을 가진다.
+
+// TODO 기능 좀 더 확인 필요해보임
+
+## Java 18
