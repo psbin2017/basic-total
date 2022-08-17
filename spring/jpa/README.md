@@ -28,6 +28,22 @@
 
 - - -
 
+## [설정] queryDsl 설정 시 주의사항
+
+어노테이션 프로세서 사용시 gradle 플러그인인 `"com.ewerk.gradle.plugins.querydsl"` 을 사용하면 안됨. (사용시 컴파일 자바시점에 빌드 실패함.)
+
+```build.gradle
+dependencies {
+    implementation("com.querydsl:querydsl-jpa:${dslVersion}")
+    implementation("com.querydsl:querydsl-apt:${dslVersion}")
+    annotationProcessor(
+        "com.querydsl:querydsl-apt:${dslVersion}:jpa",
+        "jakarta.persistence:jakarta.persistence-api",
+        "jakarta.annontation:jakarta.annontation-api"
+    )
+}
+```
+
 ## [이론] Fetch Join
 
 > 페치 조인은 SQL 한 번으로 연관된 엔티티들을 함께 조회할수 있어 SQL 호출 횟수를 줄여 성능을 최적화할 수 있다.
