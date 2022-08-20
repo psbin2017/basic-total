@@ -70,3 +70,23 @@ exchange.mutate().request(mutateSetAllRequest).build();
 log.info("[setAll] :: " + exchange.getRequest().getHeaders().toString());
 // setAll End
 ```
+
+### Spring-Security 와 WebFilter + Sleuth 사용 시 주의사항
+
+작성시점 버전
+
+- Spring-Boot 2.4.x
+- Spring-Cloud 2020.0.x
+
+Spring-Security 가 등록하는 WebFilter 는 등록시 -100 의 순서를 가지며 나머지 후행 동작하는 필터와 Security 필터와 결합하기 위해서 Flux.iterable 로 동작하게끔 하는데, 코드에서 `flatMap()` 으로 동작하게끔 바뀌어 로깅시 `Reactor` 스레드로 동작하던 스레드가 `Parallel` 스레드로 동작이 바뀐다.
+
+람다 내부에서 동작하는 로깅은 Sleuth 가 성능에 영향을 줄 수 있어 MANUAL 로 변경됨에 따라 `Parallel` 스레드에서 유지하려면 보정해주는 API 를 사용하거나 기본 단계를 조정해야된다.
+
+비교적 쉬운 해결 방법은 2개 정도 있는 것으로 보임
+
+1. 스프링 시큐리티 WebFilter 이후에 동작하는 WebFilter 로그에 대해 Sleuth API 로 로그를 TraceId / SpanId 를 보정한다. (영향도가 제일 적지만 코드 반영을 가장 많이 해야함.)
+2. 용도에 따라 스프링 시큐리티 WebFilter 보다 먼저 동작해도 되는 WebFilter 라면 앞으로 조정한다. (Spring-Securiy 의 필터 순서가 변경되면 또 변경해주어야함.)
+
+어려운 방법은..
+
+1. 필터를 등록하는 빈을 Override 하고 스프링 시큐리티 적용시 사용하는 WebFilterProxy 객체의 순서를 조정한다.
