@@ -150,13 +150,13 @@ GC 를 수행하지 않는다면 OOME (`java.lang.OutOfMemoryError: PermGen spac
 - Parallel GC 에서 Old 영역을 포함하여 멀티 스레드로 실행
 - Mark-Summary-Compact 알고리즘 사용 (sweep: 단일 스레드로 old 를 색인, summary: 멀티 스레드가 old 를 **분리** 색인)
 
-## CMS GC (Concurrent Mark Sweep)
+### CMS GC (Concurrent Mark Sweep)
 
 - stop-the-world 시간을 줄이기 위해 고안됨
 - compact 과정이 없음
 - 메모리 단편화 과정 문제가 있음
 
-## G1 GC (Garbage First)
+### G1 GC (Garbage First)
 
 - CMS GC 를 개선한 GC
 - Java 9+ 의 기본 GC
