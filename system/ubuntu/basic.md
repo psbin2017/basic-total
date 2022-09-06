@@ -63,3 +63,9 @@ netstat -antop | grep LISTEN | grep :80 wc -l
 # 커넥션 유형
 netstat -antop | grep LISTEN | grep :80
 ```
+
+## Java
+
+버전 정보 상세
+
+> java -XshowSettings:all -version
